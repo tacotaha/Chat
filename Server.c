@@ -24,14 +24,14 @@ int main(){
   memset(out_buffer, '\0', sizeof(out_buffer));
   
   /*Create Server Endpoint For Communcation*/
-  if((server_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0)
+  if((server_socket = socket(AF_INET, SOCK_STREAM, 0)) >= 0)
     printf("[+] Server Socket Created Successfully.\n");
   else{
     perror("Server Socket");
     exit(1);
   }
   
-  /*Set up Server Attributes*/
+  /*Set up Server Connectoin Attributes*/
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
   server.sin_addr.s_addr = inet_addr(IP);
@@ -71,15 +71,17 @@ int main(){
       printf("[-] Client Disconnected\n");
       exit(1);
     }
-
+    
     /*Print Client Response To stdout*/
     in_buffer[BUF - 1] = '\0';
     printf("Client: %s\n", in_buffer);
+    fflush(stdout);
     memset(in_buffer, '\0',sizeof(in_buffer));
 
     /*Read Response From Server (stdin)*/
     printf(">> ");
     fgets(out_buffer,BUF,stdin);
+    fflush(stdout);
     out_buffer[BUF - 1] = '\0';
     
     /*Send Response To Client*/
@@ -88,11 +90,14 @@ int main(){
       perror("Send");
       exit(1);
     }
-    
+
+    /*Reset Buffers*/
+    memset(out_buffer, '\0', sizeof(out_buffer));
+    memset(in_buffer, '\0',sizeof(in_buffer));
     fflush(stdout);
   }
   
-  printf("[+] Closing the connection\n");
+  printf("[-] Closing the connection\n");
   close(server_socket);
   close(client_socket);
   return 0;
