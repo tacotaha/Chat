@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include "Connect.h"
 
 #define PORT 4444
 #define IP "127.0.0.1"
@@ -15,32 +11,20 @@ int main(){
   int client_socket, bytes_sent, bytes_received;
   struct sockaddr_in server_addr;
   char in_buffer[BUF], out_buffer[BUF];
-
+  
   /*Clear Repsective Buffers*/
   memset(&client_socket, '\0', sizeof(client_socket));
   memset(in_buffer, '\0', sizeof(in_buffer));
   memset(out_buffer, '\0', sizeof(out_buffer));
-
+  
   /*Create Client Endpoint For Communcation*/
-  if((client_socket = socket(AF_INET, SOCK_STREAM, 0)) >= 0)
-    printf("[+] Client Socket Created Successfully.\n");
-  else{
-    perror("Client Socket");
-    exit(1);
-  }
-
+  client_socket = create_socket();
+  
   /*Set up Client Connection Attributes*/
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(PORT);
-  server_addr.sin_addr.s_addr = inet_addr(IP);
-
-  /* Connect To Server*/
-  if(connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == 0)
-    printf("[+] Address successfully bound to socket.\n");
-  else{
-    perror("Server Bind");
-    exit(1);
-  }
+  server_addr = create_socket_address(PORT, IP);
+  
+  /*Connect To Server*/
+  connect_to_server(client_socket,(struct sockaddr*)&server_addr);
   
   /*=======================================Main Loop========================================*/
   while(1){
