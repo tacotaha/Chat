@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include "Connect.h"
 
 #define PORT 4444
 #define IP "127.0.0.1"
@@ -24,42 +25,20 @@ int main(){
   memset(out_buffer, '\0', sizeof(out_buffer));
   
   /*Create Server Endpoint For Communcation*/
-  if((server_socket = socket(AF_INET, SOCK_STREAM, 0)) >= 0)
-    printf("[+] Server Socket Created Successfully.\n");
-  else{
-    perror("Server Socket");
-    exit(1);
-  }
-  
+  server_socket = create_socket();
+
   /*Set up Server Connectoin Attributes*/
-  server.sin_family = AF_INET;
-  server.sin_port = htons(PORT);
-  server.sin_addr.s_addr = inet_addr(IP);
-  
+  server = create_socket_address(PORT, IP);
+
   /*Assign Name To Socket*/
-  if(bind(server_socket, (struct sockaddr*) &server, sizeof(server)) >= 0)
-    printf("[+] Address successfully bound to socket.\n");
-  else{
-    perror("Server Bind");
-    exit(1);
-  }
+  bind_connection(server_socket,(struct sockaddr*)&server);
 
   /*Listen For Connections*/
-  if(listen(server_socket, BACKLOG) == 0)
-    printf("[+] Listening...\n");
-  else{
-    perror("Listen");
-    exit(1);
-  }
+  listen_for_connection(server_socket, BACKLOG);
   
   /*Accept a connection from the client*/
-  if((client_socket = accept(server_socket, (struct sockaddr*) &client, &addr_size)) >= 0)
-    printf("[+] Accepted Connection.\n");
-  else{
-    perror("Accept");
-    exit(1);
-  } 
-
+  client_socket = accept_connection_from_client(server_socket,(struct sockaddr*)&client,&addr_size);
+  
   /*=======================================Main Loop========================================*/
   while(1){
     /*Receive Data From Client*/
