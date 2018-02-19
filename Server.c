@@ -10,43 +10,90 @@
 #define PORT 4444
 #define IP "127.0.0.1"
 #define BUF 1024
+#define BACKLOG 5
 
 int main(){
-  int server_socket,client_socket;
+  int server_socket,client_socket, bytes_received, bytes_sent;
   struct sockaddr_in server, client;
-
+  char out_buffer[BUF], in_buffer[BUF];
   socklen_t addr_size;
-  char buffer[BUF];
-
-  /* Clear repsective buffers */
-  memset(&server_socket, '\0', sizeof(server_socket));
-  memset(buffer, '\0', sizeof(buffer));
   
-  server_socket = socket(AF_INET, SOCK_STREAM, 0);
-  if(server_socket)
-    printf("[+] Server Socket Created Successfully!\n");
+  /*Clear Repsective Buffers*/
+  memset(&server_socket, '\0', sizeof(server_socket));
+  memset(in_buffer, '\0', sizeof(in_buffer));
+  memset(out_buffer, '\0', sizeof(out_buffer));
+  
+  /*Create Server Endpoint For Communcation*/
+  if((server_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0)
+    printf("[+] Server Socket Created Successfully.\n");
   else{
-    fprintf(stderr, "Error! Failed to Create Server Socket!\n");
+    perror("Server Socket");
     exit(1);
   }
-
+  
+  /*Set up Server Attributes*/
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
   server.sin_addr.s_addr = inet_addr(IP);
-
-  bind(server_socket, (struct sockaddr*) &server, sizeof(server));
   
-  listen(server_socket, 5);
-  printf("[+] Listening...\n");
+  /*Assign Name To Socket*/
+  if(bind(server_socket, (struct sockaddr*) &server, sizeof(server)) >= 0)
+    printf("[+] Address successfully bound to socket.\n");
+  else{
+    perror("Server Bind");
+    exit(1);
+  }
 
-  client_socket = accept(server_socket, (struct sockaddr*) &client, &addr_size);
+  /*Listen For Connections*/
+  if(listen(server_socket, BACKLOG) == 0)
+    printf("[+] Listening...\n");
+  else{
+    perror("Listen");
+    exit(1);
+  }
+  
+  /*Accept a connection from the client*/
+  if((client_socket = accept(server_socket, (struct sockaddr*) &client, &addr_size)) >= 0)
+    printf("[+] Accepted Connection.\n");
+  else{
+    perror("Accept");
+    exit(1);
+  } 
 
-  strcpy(buffer, "Test String!");
-  send(client_socket, buffer, strlen(buffer), 0);
+  /*=======================================Main Loop========================================*/
+  while(1){
+    /*Receive Data From Client*/
+    bytes_received = recv(client_socket, in_buffer, sizeof(in_buffer), 0);
+    if(bytes_received < 0){
+      perror("Recv");
+      exit(1);
+    }else if(bytes_received == 0){
+      printf("[-] Client Disconnected\n");
+      exit(1);
+    }
+
+    /*Print Client Response To stdout*/
+    in_buffer[BUF - 1] = '\0';
+    printf("Client: %s\n", in_buffer);
+    memset(in_buffer, '\0',sizeof(in_buffer));
+
+    /*Read Response From Server (stdin)*/
+    printf(">> ");
+    fgets(out_buffer,BUF,stdin);
+    out_buffer[BUF - 1] = '\0';
+    
+    /*Send Response To Client*/
+    bytes_sent = send(client_socket, out_buffer, sizeof(out_buffer), 0);
+    if(bytes_sent < 0){
+      perror("Send");
+      exit(1);
+    }
+    
+    fflush(stdout);
+  }
+  
   printf("[+] Closing the connection\n");
-
   close(server_socket);
   close(client_socket);
-  
   return 0;
 }
