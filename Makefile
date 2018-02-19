@@ -4,11 +4,13 @@ EXEC=server client
 
 all: client server
 
-client: Client.c
-	$(CC) $(CFLAGS) Client.c -o client
+client: connect.o Client.c
+	$(CC) $(CFLAGS) Client.c connect.o -o client
 
-server: Server.c
-	$(CC) $(CFLAGS) Server.c -o server
+server: connect.o Server.c
+	$(CC) $(CFLAGS) Server.c connect.o -o server
 
+connect.o: Connect.c Connect.h
+	$(CC) -c Connect.c -o connect.o
 clean:
-	\rm $(EXEC) *~
+	\rm $(EXEC) *.o *~
