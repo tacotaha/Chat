@@ -50,4 +50,12 @@ int listen_for_connection(int listener_socket, int backlog);
  */
 int accept_connection_from_client(int server_socket, struct sockaddr* client, socklen_t* addr_size);
 
+
+/* 
+ * @Params: Socket File Descriptor for conecting client,
+ *          sockaddr struct for server to connect to,
+ * @Return: Status Code according to connect()
+ * Connect To Server
+ */
+int connect_to_server(int client_socket, struct sockaddr* server);
 #endif
