@@ -6,19 +6,22 @@
 
 
 void* p_server_to_clients(void* arg){
-  Message* m  = (Message*) arg;
-  int  bytes_sent, client_socket;
-  char* out_buffer;
- 
-  client_socket = m->to_socket;
-  out_buffer = m->message;
-  
+  int  bytes_sent = 0;
+  char out_buffer[] = "Hello there! This is a concurrency test!";
+
+  int client_socket = *(int*)arg;
+
   /*Send Response To Client*/
   bytes_sent = send(client_socket, out_buffer, sizeof(out_buffer), 0);
   if(bytes_sent < 0){
-      perror("Send");
-      exit(1);
+    perror("DID NOT SEND!!");
+    pthread_exit(0);
+  }else{
+    printf("IT ACTUAL SENT YEEEE!!\n");
   }
-  
+
+  pthread_detach(pthread_self());
+  printf("Socket %d connected!\n", client_socket);
+   
   pthread_exit(0);
 }
