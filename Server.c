@@ -6,7 +6,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "Connect.h"
+#include "Stream.h"
 
 #define PORT 4444
 #define IP "127.0.0.1"
@@ -14,7 +16,7 @@
 #define BACKLOG 5
 
 int main(){
-  int server_socket,client_socket, bytes_received, bytes_sent;
+  int server_socket,client_socket, bytes_received;
   struct sockaddr_in server, client;
   char out_buffer[BUF], in_buffer[BUF];
   socklen_t addr_size;
@@ -27,7 +29,7 @@ int main(){
   /*Create Server Endpoint For Communcation*/
   server_socket = create_socket();
 
-  /*Set up Server Connectoin Attributes*/
+  /*Set up Server Connection Attributes*/
   server = create_socket_address(PORT, IP);
 
   /*Assign Name To Socket*/
@@ -63,12 +65,25 @@ int main(){
     fflush(stdout);
     out_buffer[BUF - 1] = '\0';
     
-    /*Send Response To Client*/
+    /*Send Response To Client
     bytes_sent = send(client_socket, out_buffer, sizeof(out_buffer), 0);
     if(bytes_sent < 0){
       perror("Send");
       exit(1);
     }
+    */
+
+    Message m;
+    m.to_socket = client_socket;
+    m.from_socket = server_socket;
+    m.message = out_buffer;
+    
+    pthread_t tid;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+
+    pthread_create(&tid, &attr, p_server_to_clients, &m);
+    pthread_join(tid,NULL);
 
     /*Reset Buffers*/
     memset(out_buffer, '\0', sizeof(out_buffer));
