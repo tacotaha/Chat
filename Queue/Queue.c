@@ -4,21 +4,6 @@
 
 #define INT_MIN -2147483648
 
-//Known types...
-typedef struct node Node;
-
-struct node{
-  int data;
-  Node* next;
-  Node* prev;
-};
-
-typedef struct queue{
-  Node* head;
-  Node* tail;
-  int size;
-}Queue;
-
 QUEUE queue_init(void){
   Queue *queue = (Queue*) malloc(sizeof(Queue));
 
@@ -31,7 +16,7 @@ QUEUE queue_init(void){
   return (QUEUE) queue;
 }
 
-Status queue_enqueue(QUEUE hQueue, int data){
+Status queue_enqueue(QUEUE hQueue, void* data){
 
   Queue *queue = (Queue*) hQueue;
   if(queue == NULL) return FAILURE;
@@ -61,13 +46,10 @@ Status queue_enqueue(QUEUE hQueue, int data){
 
 Status queue_dequeue(QUEUE hQueue){
   Queue* queue = (Queue*) hQueue;
-
-
-  //Nonexistent or empty queue...
+  
   if(queue == NULL || queue->tail == NULL)
     return FAILURE;
 
-  //only one node in the list...
   if(queue->head->next == NULL){
     free(queue->head);
     queue->head = NULL;
@@ -81,7 +63,6 @@ Status queue_dequeue(QUEUE hQueue){
   return SUCCESS;
 }
 
-
 Boolean queue_empty(QUEUE hQueue){
   Queue* queue = (Queue*) hQueue; 
   return (Boolean) (queue == NULL || queue->head == NULL);
@@ -89,35 +70,19 @@ Boolean queue_empty(QUEUE hQueue){
 
 int queue_size(QUEUE hQueue){
   Queue* queue = (Queue*) hQueue;
-
-  if(queue == NULL) return INT_MIN;
-  
+  if(queue == NULL) return INT_MIN;  
   return queue->size;
 }
 
-int queue_front(QUEUE hQueue){
+void* queue_front(QUEUE hQueue){
   Queue* queue = (Queue*) hQueue;
-
+  
   if(queue != NULL && queue->head != NULL)
     return queue->tail->data;
-
-  return INT_MIN; //Our way of reuturning failure
-}
-
-void queue_print(QUEUE hQueue){
-  Queue* queue = (Queue*) hQueue;
-
-  if(queue == NULL || queue->head == NULL)
-    return;
- 
-  Node *temp = queue->head;
   
-  while(temp != NULL){
-    printf("%d\n", temp->data);
-    temp = temp->next;
-  }
+  return NULL;
 }
-    
+
 void queue_destroy(QUEUE* phQueue){
   Queue* queue = (Queue*) *phQueue;
 
