@@ -5,11 +5,11 @@ EXEC=server client
 
 all: client server
 
-client: client.o connect.o stream.o
-	$(CC) client.o connect.o stream.o $(PFLAGS) -o client
+client: client.o stream.o connect.o queue.o
+	$(CC) client.o stream.o connect.o queue.o $(PFLAGS) -o client
 
-server: server.o connect.o stream.o queue.o
-	$(CC) server.o queue.o connect.o stream.o $(PFLAGS) -o server
+server: server.o stream.o connect.o queue.o
+	$(CC) server.o stream.o connect.o queue.o $(PFLAGS) -o server
 
 client.o: Client.c
 	$(CC) $(CFLAGS) -c Client.c -o client.o
