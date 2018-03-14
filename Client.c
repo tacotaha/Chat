@@ -13,9 +13,9 @@ int main(){
   char in_buffer[BUF], out_buffer[BUF];
   
   /*Clear Repsective Buffers*/
-  memset(&client_socket, '\0', sizeof(client_socket));
-  memset(in_buffer, '\0', sizeof(in_buffer));
-  memset(out_buffer, '\0', sizeof(out_buffer));
+  memset(&client_socket,0,sizeof(client_socket));
+  memset(in_buffer,0,sizeof(in_buffer));
+  memset(out_buffer,0,sizeof(out_buffer));
   
   /*Create Client Endpoint For Communcation*/
   client_socket = create_socket();
