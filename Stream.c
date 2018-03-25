@@ -113,4 +113,5 @@ void print_banner(void){
   if(fp)
     while((c = fgetc(fp)) != EOF)
       printf("%c",c);
+  fclose(fp);
 }
