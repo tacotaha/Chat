@@ -36,10 +36,10 @@ int main(){
     
     /*Compare Data In File To Data Received From Client*/
     if(strcmp(out_buffer, in_buffer) == 0){
-      printf("%sSTRING %d PASSED%s\n", GREEN,count++,RESET);
+      printf("%sSTRING %d PASSED%s\n",COLORS[GREEN],count++,COLORS[RESET]);
       ++passed;
     }else{
-      printf("%sSTRING %d FAILED%s\n", GREEN,count++,RESET);
+      printf("%sSTRING %d FAILED%s\n",COLORS[GREEN],count++,COLORS[RESET]);
       ++passed;
     }
     
