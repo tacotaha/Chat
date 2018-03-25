@@ -106,3 +106,11 @@ void* client_read_thread(void* arg){
   free(m);
   pthread_exit(0);
 }
+
+void print_banner(void){
+  FILE* fp = fopen("ascii_chat.txt","r");
+  char c;
+  if(fp)
+    while((c = fgetc(fp)) != EOF)
+      printf("%c",c);
+}

@@ -33,5 +33,5 @@ typedef struct message{
 void* handle_client(void* arg);
 void* client_write_thread(void* arg);
 void* client_read_thread(void* arg);
-
+void print_banner(void);
 #endif
