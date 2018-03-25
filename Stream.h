@@ -8,36 +8,30 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "Queue/Queue.h"
+
+#include "Colors.h"
 
 #define BUF 1024
 #define MAX_CLIENTS 100
+#define PORT 4444
+#define IP "127.0.0.1"
+#define BACKLOG 10
 
 typedef struct client{
-  QUEUE* messages;
   pthread_mutex_t* mutex;
   int sender;
   int* clients;
 }Client;
 
 typedef struct message{
-  char* message;
-  int sender;
+  char message[BUF];
+  char user_name[BUF];
+  char color[COLOR_SIZE];
+  int socket;
 }Message;
 
-typedef struct chat{
-  fd_set listeners;
-  int socket;
-  int clients[MAX_CLIENTS];
-  pthread_mutex_t *clients_m;
-}Chat;
-
-/*Spawn thread to output the server's
- buffer to the each client.
-
- RACE: Lock the server's output buffer 
- untill it's been written out, to prevent
- other theads from overwriting it.*/
-void* p_server_to_clients(void* arg);
+void* handle_client(void* arg);
+void* client_write_thread(void* arg);
+void* client_read_thread(void* arg);
 
 #endif
