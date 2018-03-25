@@ -4,7 +4,11 @@
 #include "Connect.h"
 
 int create_socket(void){
+  int option = 1;
   int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+  
   if(sock  >= 0)
     printf("[+] Socket Created Successfully.\n");
   else{
