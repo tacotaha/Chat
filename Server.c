@@ -11,12 +11,28 @@
 #include "Connect.h"
 #include "Stream.h"
 
-int main(){
-  int server_socket, client_socket, clients[MAX_CLIENTS], client_count = 0;
+int main(int argc, char* argv[]){
+  int server_socket, client_socket, clients[MAX_CLIENTS], client_count = 0, port = PORT;
   struct sockaddr_in server;
   char out_buffer[BUF], in_buffer[BUF];
   pthread_t t;
   pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+  char* ip = IP;
+
+  printf("%s", COLORS[GREEN]);
+  print_banner();
+  printf("%s\n\n", COLORS[RESET]);
+  
+  for(int i = 1; i < argc; i += 2){
+    if(!strcmp(argv[i],"-i") && argc >= i + 1)
+      ip = argv[i + 1];
+    else if(!strcmp(argv[i],"-p") && argc >= i + 1)
+      port = atoi(argv[i + 1]);
+    else{
+      printf("Usage: %s [-i] ip_addr [-p] port\n", argv[0]);
+      exit(0);
+    }
+  }
   
   memset(&server_socket,0x0,sizeof(server_socket));
   memset(in_buffer,0x0,sizeof(in_buffer));
@@ -24,7 +40,7 @@ int main(){
   
   server_socket = create_socket();
   
-  server = create_socket_address(PORT, IP);
+  server = create_socket_address(port, ip);
   
   bind_connection(server_socket,(struct sockaddr*)&server);
   
