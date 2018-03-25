@@ -3,14 +3,15 @@
  *   Color Codes for Printing 
  *   Status Messages To The Terminal
  *
-*/
+ */
 
-const char* RESET = "\e[0m";
-const char* BLACK = "\e[0;30m";
-const char* RED = "\e[0;31m";
-const char* GREEN = "\e[0;32m";
-const char* YELLOW = "\e[0;33m";
-const char* BLUE = "\e[0;34m";
-const char* PURPLE = "\e[0;35m";
-const char* CYAN = "\e[0;36m";
-const char* WHITE = "\e[0;37m";
+#ifndef __COLORS_H__
+#define __COLORS_H__
+
+#define COLOR_SIZE sizeof(COLORS[1]) / sizeof(char)
+static const int num_colors = 6;
+
+typedef enum color_index{RESET,RED,GREEN,YELLOW,BLUE,PURPLE,CYAN} Color_Index;
+static const char* COLORS[] = {"\033[0m","\033[1;31m","\033[1;32m","\033[1;33m","\033[1;34m","\033[1;35m","\033[1;36m"};
+
+#endif
