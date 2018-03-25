@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
 	color = COLORS[CYAN];
     }else{
       printf("Usage: %s [-i] ip_addr [-p] port [-c] <color>\n", argv[0]);
+      printf("Default: ip = 127.0.0.0.1, port = 4444\n");
       printf("\nWhere <color> defines the color of the user's username as it appears in the chat window.\nValid colors include: red, green, yellow, blue, purple, cyan\n");
       exit(0);
     }
